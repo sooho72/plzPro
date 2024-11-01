@@ -1,5 +1,6 @@
 package com.lyj.securitydomo.domain;
 
+import lombok.*;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,6 +15,7 @@ public class Board {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long num;
+    private String name;
     private String title;
     private String writer;
     private String content;
@@ -27,7 +29,7 @@ public class Board {
     @ManyToOne(fetch = FetchType.LAZY,
             cascade = CascadeType.ALL,
             optional = true)
-    @JoinColumn(name="user_id")
+    @JoinColumn(name="userId")
     private User user;
 
     public void updateHitcount() {
