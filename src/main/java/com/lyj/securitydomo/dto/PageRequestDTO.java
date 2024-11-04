@@ -1,4 +1,4 @@
-package com.lyj.securitydomo.controller;
+package com.lyj.securitydomo.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -1,6 +1,7 @@
-package com.example.securityex01.repository;
+package com.lyj.securitydomo.repository;
 
-import com.example.securityex01.domain.Comment;
+
+import com.lyj.securitydomo.domain.Comment;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface CommentRepository extends JpaRepository<Comment, Long> {

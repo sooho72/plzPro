@@ -1,7 +1,7 @@
 package com.lyj.securitydomo;
 
-import com.lyj.securitydomo.controller.PageRequestDTO;
-import com.lyj.securitydomo.controller.PageResponseDTO;
+import com.lyj.securitydomo.dto.PageRequestDTO;
+import com.lyj.securitydomo.dto.PageResponseDTO;
 import com.lyj.securitydomo.dto.PostDTO;
 import com.lyj.securitydomo.service.PostService;
 import groovy.util.logging.Log4j2;

@@ -1,9 +1,8 @@
 package com.lyj.securitydomo.service;
 
-import com.lyj.securitydomo.controller.PageRequestDTO;
-import com.lyj.securitydomo.controller.PageResponseDTO;
+import com.lyj.securitydomo.dto.PageRequestDTO;
+import com.lyj.securitydomo.dto.PageResponseDTO;
 import com.lyj.securitydomo.domain.Post;
-import com.lyj.securitydomo.domain.User;
 import com.lyj.securitydomo.dto.PostDTO;
 import com.lyj.securitydomo.repository.PostRepository;
 import jakarta.transaction.Transactional;
@@ -12,7 +11,6 @@ import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
-import org.springframework.ui.Model;
 
 import org.springframework.data.domain.Pageable;
 import java.util.List;

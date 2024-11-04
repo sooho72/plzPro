@@ -1,4 +1,4 @@
-package com.example.securityex01.domain;
+package com.lyj.securitydomo.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;

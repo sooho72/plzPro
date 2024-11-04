@@ -11,9 +11,13 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
-    @Query("SELECT p FROM Post p WHERE "
+
+
+    @Query("SELECT p FROM Post p WHERE " //동적쿼리
             + "(:keyword IS NULL OR p.title LIKE %:keyword% OR p.contentText LIKE %:keyword%) "
             + "AND (:types IS NULL OR p.title IN (:types))")
+
+
     Page<Post> searchAll(@Param("types") String[] types,
                          @Param("keyword") String keyword,
                          Pageable pageable);
