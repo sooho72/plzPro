@@ -4,8 +4,6 @@ package com.lyj.securitydomo.domain;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.Date;
-
 @Entity
 @Getter
 @Setter
@@ -13,7 +11,7 @@ import java.util.Date;
 @NoArgsConstructor
 @Builder
 @ToString
-public class Post extends PostBaseEntity {
+public class Post extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long postId  ; // 게시글 ID자동 생성
