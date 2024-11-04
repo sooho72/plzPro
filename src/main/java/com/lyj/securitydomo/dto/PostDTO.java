@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 @Builder
@@ -28,4 +29,6 @@ public class PostDTO {
     private Date createdAt; //등록날짜
 
     private Date upDatedAt; //수정날짜
+
+    private List<String> fileNames;
 }

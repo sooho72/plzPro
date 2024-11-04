@@ -3,17 +3,31 @@ package com.lyj.securitydomo.controller;
 import com.lyj.securitydomo.dto.PageRequestDTO;
 import com.lyj.securitydomo.dto.PageResponseDTO;
 import com.lyj.securitydomo.dto.PostDTO;
+import com.lyj.securitydomo.dto.upload1.UploadFileDTO;
 import com.lyj.securitydomo.service.PostService;
 import groovy.util.logging.Log4j2;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import net.coobird.thumbnailator.Thumbnailator;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 import static org.hibernate.query.sqm.tree.SqmNode.log;
 
@@ -22,6 +36,9 @@ import static org.hibernate.query.sqm.tree.SqmNode.log;
 @RequestMapping("/post")
 @RequiredArgsConstructor
 public class PostController {
+    @Value("${com.lyj.securitydomo.upload.path}")
+    private String uploadPath;
+
     private final PostService postService;
 
     @GetMapping("/list1")
@@ -39,7 +56,7 @@ public class PostController {
 
     }
     @PostMapping("/register1") //등록
-    public String register1POST(@Valid PostDTO postDTO, BindingResult bindingResult,
+    public String register1Post(@Valid PostDTO postDTO, BindingResult bindingResult,
                                 RedirectAttributes redirectAttributes) {
         log.info("post Post register");
 
@@ -107,4 +124,73 @@ public class PostController {
         return "redirect:/post/list1";
      }
 
+    private List<String> fileUpload(UploadFileDTO uploadFileDTO){
+
+        List<String> list = new ArrayList<>();
+        uploadFileDTO.getFiles().forEach(multipartFile -> {
+            String originalName = multipartFile.getOriginalFilename();
+            log.info(originalName);
+
+            String uuid = UUID.randomUUID().toString();
+            Path savePath = Paths.get(uploadPath, uuid+"_"+ originalName);
+            boolean image = false;
+            try {
+                multipartFile.transferTo(savePath); // 서버에 파일저장
+                //이미지 파일의 종류라면
+                if(Files.probeContentType(savePath).startsWith("image")){
+                    image = true;
+                    File thumbFile = new File(uploadPath, "s_" + uuid+"_"+ originalName);
+                    Thumbnailator.createThumbnail(savePath.toFile(), thumbFile, 200,200);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            list.add(uuid+"_"+originalName);
+        });
+        return list;
+    }
+
+    @GetMapping("/view/{fileName}")
+    @ResponseBody
+    public ResponseEntity<Resource> viewFileGet(@PathVariable("fileName") String fileName) {
+        Resource resource = new FileSystemResource(uploadPath + File.separator + fileName);
+        String resourceName = resource.getFilename();
+        HttpHeaders headers = new HttpHeaders();
+
+        try{
+            headers.add("Content-Type", Files.probeContentType( resource.getFile().toPath() ));
+        } catch(Exception e){
+            return ResponseEntity.internalServerError().build();
+        }
+        return ResponseEntity.ok().headers(headers).body(resource);
+    }
+
+    private void removeFile(List<String> fileNames){
+        log.info("AAAAA"+fileNames.size());
+
+        for(String fileName:fileNames){
+            log.info("fileRemove method: "+fileName);
+            Resource resource = new FileSystemResource(uploadPath+File.separator + fileName);
+            String resourceName = resource.getFilename();
+
+            // Map<String, Boolean> resultMap = new HashMap<>();
+            boolean removed = false;
+
+            try {
+                String contentType = Files.probeContentType(resource.getFile().toPath());
+                removed = resource.getFile().delete();
+
+                //섬네일이 존재한다면
+                if(contentType.startsWith("image")){
+                    String fileName1=fileName.replace("s_","");
+                    File originalFile = new File(uploadPath+File.separator + fileName1);
+                    originalFile.delete();
+                }
+
+            } catch (Exception e) {
+                log.error(e.getMessage());
+            }
+        }
+    }
 }
+

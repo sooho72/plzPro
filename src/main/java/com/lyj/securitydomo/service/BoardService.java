@@ -11,4 +11,5 @@ public interface BoardService {
     public Board findById(Long num);
     public void update(Board board);
     public void delete(Long num);
+
 }

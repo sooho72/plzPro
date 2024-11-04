@@ -41,6 +41,7 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
     compileOnly 'org.projectlombok:lombok:1.18.28' // 사용 가능한 최신 버전으로 설정
     annotationProcessor 'org.projectlombok:lombok:1.18.28'
     // https://mvnrepository.com/artifact/nz.net.ultraq.thymeleaf/thymeleaf-layout-dialect
