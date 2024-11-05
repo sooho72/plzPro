@@ -48,8 +48,8 @@ public interface PostService {
                 .build();
 
         List<String> fileNames =
-                post.getImageSet().stream().sorted().map(boardImage ->
-                                boardImage.getUuid() + "_" + boardImage.getFileName())
+                post.getImageSet().stream().sorted().map(postImage ->
+                                postImage.getUuid() + "_" + postImage.getFileName())
                         .collect(Collectors.toList());
         postDTO.setFileNames(fileNames);
         return postDTO;

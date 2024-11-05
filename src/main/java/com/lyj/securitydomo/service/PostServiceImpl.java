@@ -52,7 +52,7 @@ public class PostServiceImpl implements PostService {
         Post post = result.orElseThrow();
 
         post.change(postDTO.getTitle(),postDTO.getContentText());
-        post.clearImages();
+        post.clearAllImages();
 
         if(postDTO.getFileNames() !=null){
             for (String fileName : postDTO.getFileNames()) {
