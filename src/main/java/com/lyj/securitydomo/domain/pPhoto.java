@@ -5,12 +5,11 @@ import lombok.*;
 
 @Entity
 @Getter
-@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString(exclude = "post")
-public class pPhoto extends BaseEntity implements Comparable<pPhoto> {
+
+public class pPhoto implements Comparable<pPhoto> {
 
     @Id
     private String uuid;

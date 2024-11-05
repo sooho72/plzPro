@@ -2,16 +2,15 @@ package com.lyj.securitydomo.controller;
 
 
 import com.lyj.securitydomo.dto.PostDTO;
-import com.lyj.securitydomo.dto.upload1.UploadFileDTO;
+import com.lyj.securitydomo.dto.upload.UploadFileDTO;
 
-import com.lyj.securitydomo.dto.upload1.UploadResultDTO;
+import com.lyj.securitydomo.dto.upload.UploadResultDTO;
 import lombok.extern.log4j.Log4j2;
 import net.coobird.thumbnailator.Thumbnailator;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

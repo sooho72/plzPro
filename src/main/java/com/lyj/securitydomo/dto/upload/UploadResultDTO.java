@@ -1,6 +1,5 @@
-package com.lyj.securitydomo.dto.upload1;
+package com.lyj.securitydomo.dto.upload;
 
-import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,8 +14,7 @@ public class UploadResultDTO {
     private String uuid;
     private String fileName;
     private boolean image;
-    private int pno; // 연관된 게시글 ID
-
+    private int pno;
 
     public String getLink(){
         if(image){
@@ -25,6 +23,7 @@ public class UploadResultDTO {
             return uuid+"_"+fileName;
         }
     }
+
 }
 
 

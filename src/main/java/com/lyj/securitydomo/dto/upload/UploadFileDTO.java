@@ -1,4 +1,4 @@
-package com.lyj.securitydomo.dto.upload1;
+package com.lyj.securitydomo.dto.upload;
 
 import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;

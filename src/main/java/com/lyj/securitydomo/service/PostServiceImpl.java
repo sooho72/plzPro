@@ -28,8 +28,8 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Long register(PostDTO postDTO) {
-        Post post = modelMapper.map(postDTO, Post.class);
-
+//        Post post = modelMapper.map(postDTO, Post.class);
+        Post post = dtoToEntity(postDTO);
         Long postId = postRepository.save(post).getPostId();
 
         return postId;
@@ -38,10 +38,10 @@ public class PostServiceImpl implements PostService {
     @Override
     public PostDTO readOne(Long postId) {
         Optional<Post> result = postRepository.findById(postId);
-
         Post post = result.orElseThrow();
 
-        PostDTO postDTO = modelMapper.map(post, PostDTO.class);
+//        PostDTO postDTO = modelMapper.map(post, PostDTO.class);
+        PostDTO postDTO = entityToDTO(post);
 
         return postDTO;
     }
@@ -49,10 +49,17 @@ public class PostServiceImpl implements PostService {
     @Override
     public void modify(PostDTO postDTO) {
         Optional<Post> result = postRepository.findById(postDTO.getPostId());
-
         Post post = result.orElseThrow();
 
         post.change(postDTO.getTitle(),postDTO.getContentText());
+        post.clearImages();
+
+        if(postDTO.getFileNames() !=null){
+            for (String fileName : postDTO.getFileNames()) {
+                String[] split = fileName.split("_");
+                post.addImage(split[0], split[1]);
+            }
+        }
 
         postRepository.save(post);
 

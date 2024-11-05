@@ -21,22 +21,38 @@ public interface PostService {
     PageResponseDTO<PostDTO> list(PageRequestDTO pageRequestDTO);
 
 
-//    default PostDTO entityToDTO(Post post) {
-//        PostDTO boardDTO = PostDTO.builder()
-//                .postId(post.getPostId())
-//                .title(post.getTitle())
-//                .contentText(post.getContentText())
-//                .createdAt(post.getCreatedAt())
-//                .upDatedAt(post.getUpDatedAt())
-//                .build();
-//
-//        List<String> fileNames =
-//                post.getImageSet().stream().sorted().map(pPhoto ->
-//                                pPhoto.getUuid()+"_"+pPhoto.getFileName())
-//                        .collect(Collectors.toList());
-//        boardDTO.setFileNames(fileNames);
-//        return boardDTO;
-//    }
-//
+    default Post dtoToEntity(PostDTO postDTO) {
+        Post post = Post.builder()
+                .postId(postDTO.getPostId())
+                .title(postDTO.getTitle())
+                .contentText(postDTO.getContentText())
 
+                .build();
+
+        if (postDTO.getFileNames() != null) {
+            postDTO.getFileNames().forEach(fileName -> {
+                String[] arr = fileName.split("_");
+                post.addImage(arr[0], arr[1]);
+            });
+        }
+        return post;
+    }
+
+    default PostDTO entityToDTO(Post post) {
+        PostDTO postDTO = PostDTO.builder()
+                .postId(post.getPostId())
+                .title(post.getTitle())
+                .contentText(post.getContentText())
+                .createdAt(post.getCreatedAt())
+                .upDatedAt(post.getUpDatedAt())
+                .build();
+
+        List<String> fileNames =
+                post.getImageSet().stream().sorted().map(boardImage ->
+                                boardImage.getUuid() + "_" + boardImage.getFileName())
+                        .collect(Collectors.toList());
+        postDTO.setFileNames(fileNames);
+        return postDTO;
+    }
 }
+
