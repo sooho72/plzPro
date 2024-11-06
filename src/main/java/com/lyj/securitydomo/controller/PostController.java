@@ -45,9 +45,11 @@ public class PostController {
     public void list1(PageRequestDTO pageRequestDTO, Model model) {
         PageResponseDTO<PostDTO> responseDTO = postService.list(pageRequestDTO);
         log.info(responseDTO);
-        model.addAttribute("responseDTO", responseDTO);
 
+        // 게시글 리스트를 ""라는 이름으로 모델에 추가
+        model.addAttribute("lists", responseDTO.getDtoList());
     }
+
     @GetMapping("/register1") //등록
     public void register1GET(){
 
@@ -75,15 +77,15 @@ public class PostController {
         redirectAttributes.addFlashAttribute("result", postId);
         return "redirect:/post/list1";
     }
-     @GetMapping("/read1") //조회처리
-        public void read(Long postId, PageRequestDTO pageRequestDTO, Model model) {
-            PostDTO postDTO = postService.readOne(postId);
-            log.info(postDTO);
-            model.addAttribute("dto", postDTO);
-     }
+//     @GetMapping("/read1") //조회처리
+//        public void read1(Long postId, PageRequestDTO pageRequestDTO, Model model) {
+//            PostDTO postDTO = postService.readOne(postId);
+//            log.info(postDTO);
+//            model.addAttribute("dto", postDTO);
+//     }
 
      @GetMapping({"/read1","/modify1"}) //게시물의 수정/삭제 처리
-    public void read1(Long postId, PageRequestDTO pageRequestDTO, Model model) {
+    public void read(Long postId, PageRequestDTO pageRequestDTO, Model model) {
         PostDTO postDTO = postService.readOne(postId);
         log.info(postDTO);
         model.addAttribute("dto", postDTO);
