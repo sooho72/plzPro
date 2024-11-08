@@ -2,28 +2,14 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>만남 장소 설정</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- 네이버 지도 API 불러오기 - Client ID를 실제 ID로 교체 -->
+    <script type="text/javascript" src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=&submodules=geocoder"></script>
     <script type="text/javascript" src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId="></script>
 </head>
 <body>
 <div class="post-form">
-    <form action="/post/register1" method="post" enctype="multipart/form-data">
-        <div>
-            <label for="title">제목</label>
-            <input type="text" id="title" name="title" required maxlength="50">
-        </div>
-        <div>
-            <label for="content">내용</label>
-            <textarea id="content" name="contentText" required></textarea>
-        </div>
-        <div>
-            <label for="fileUpload">이미지 업로드</label>
-            <input type="file" id="fileUpload" name="files" multiple>
-        </div>
 
-        <!-- 지도 및 검색 입력란 -->
         <div>
             <label>만남 장소 설정</label>
             <input type="text" id="search" placeholder="장소 검색" style="width:80%; margin-bottom:10px;">
@@ -38,68 +24,177 @@
         <button type="submit">등록</button>
     </form>
 </div>
-
 <script>
-    var map, marker; // 전역 변수로 선언하여 여러 함수에서 접근 가능
-    var lat = 37.5665;
-    var lng = 126.9780;
-
     // 지도 초기화
-    function mapcreate(lat, lng) {
+    var map;
+    var infoWindow;
+    const lat = document.querySelector("#lat")
+    const lng = document.querySelector("#lng")
+
+    function initializeMap() {
         map = new naver.maps.Map("map", {
-            center: new naver.maps.LatLng(lat, lng),
-            zoom: 10
+            center: new naver.maps.LatLng(37.3595316, 127.1052133),
+            zoom: 15,
+            mapTypeControl: true
         });
 
-        marker = new naver.maps.Marker({
-            position: map.getCenter(),
-            map: map
+        infoWindow = new naver.maps.InfoWindow({
+            anchorSkew: true
         });
 
-        // 지도 클릭 시 위치 업데이트
-        naver.maps.Event.addListener(map, 'click', function(e) {
-            var lat = e.coord.lat();
-            var lng = e.coord.lng();
+        map.setCursor('pointer');
+    }
 
-            marker.setPosition(new naver.maps.LatLng(lat, lng));
+    function searchCoordinateToAddress(latlng) {
+        infoWindow.close();
 
-            document.getElementById('latitude').value = lat;
-            document.getElementById('longitude').value = lng;
+
+        naver.maps.Service.reverseGeocode({
+            coords: latlng,
+            orders: [
+                naver.maps.Service.OrderType.ADDR,
+                naver.maps.Service.OrderType.ROAD_ADDR
+            ].join(',')
+        }, function(status, response) {
+            if (status === naver.maps.Service.Status.ERROR) {
+                return alert('Something Wrong!');
+            }
+
+            var items = response.v2.results,
+                address = '',
+                htmlAddresses = [];
+
+            for (var i = 0, ii = items.length; i < ii; i++) {
+                var item = items[i];
+                address = makeAddress(item) || '';
+                var addrType = item.name === 'roadaddr' ? '[도로명 주소]' : '[지번 주소]';
+
+                htmlAddresses.push((i + 1) + '. ' + addrType + ' ' + address);
+            }
+
+            infoWindow.setContent([
+                '<div style="padding:10px;min-width:200px;line-height:150%;">',
+                '<h4 style="margin-top:5px;">검색 좌표</h4><br />',
+                htmlAddresses.join('<br />'),
+                '</div>'
+            ].join('\n'));
+
+            infoWindow.open(map, latlng);
         });
     }
 
-    window.onload = function() {
-        document.getElementById("searchButton").onclick = searchLocation;
-        mapcreate(lat, lng); // 초기 지도 생성
-    };
+    function searchAddressToCoordinate(address) {
+        if (!naver.maps.Service || !naver.maps.Service.geocode) {
+            alert("네이버 지도 서비스가 올바르게 로드되지 않았습니다.");
+            return;
+        }
 
-    function searchLocation() {
-        var address = document.getElementById("search").value;
-
-        naver.maps.Service.geocode({ query: address }, function(status, response) {
-            if (status !== naver.maps.Service.Status.OK) {
-                return alert('장소를 찾을 수 없습니다.');
+        naver.maps.Service.geocode({
+            query: address
+        }, function(status, response) {
+            if (status === naver.maps.Service.Status.ERROR) {
+                return alert('Something Wrong!');
             }
 
-            console.log(response);
-            var result = response.v2.addresses[0];
-
-            if (!result) {
-                return alert('검색된 결과가 없습니다.');
+            if (response.v2.meta.totalCount === 0) {
+                return alert('검색 결과가 없습니다.');
             }
 
-            lat = parseFloat(result.y);
-            lng = parseFloat(result.x);
+            var item = response.v2.addresses[0], // 디비저장위도경도
+                point = new naver.maps.Point(item.x, item.y);
+            console.log(item.x+","+item.y)
+            lat.value=item.y
+            lng.value=item.x
 
-            // 마커와 지도 위치 업데이트
-            map.setCenter(new naver.maps.LatLng(lat, lng));
-            marker.setPosition(new naver.maps.LatLng(lat, lng));
 
-            // 숨겨진 필드에 위도와 경도 값 저장
-            document.getElementById('latitude').value = lat;
-            document.getElementById('longitude').value = lng;
+            var htmlAddresses = [];
+            if (item.roadAddress) {
+                htmlAddresses.push('[도로명 주소] ' + item.roadAddress);
+            }
+            if (item.jibunAddress) {
+                htmlAddresses.push('[지번 주소] ' + item.jibunAddress);
+            }
+            if (item.englishAddress) {
+                htmlAddresses.push('[영문명 주소] ' + item.englishAddress);
+            }
+
+            infoWindow.setContent([
+                '<div style="padding:10px;min-width:200px;line-height:150%;">',
+                '<h4 style="margin-top:5px;">검색 주소 : ' + address + '</h4><br />',
+                htmlAddresses.join('<br />'),
+                '</div>'
+            ].join('\n'));
+
+            map.setCenter(point);
+            infoWindow.open(map, point);
+
+            // 숨겨진 필드에 좌표 값 설정
+            document.getElementById('latitude').value = item.y;
+            document.getElementById('longitude').value = item.x;
         });
     }
+
+    function initGeocoder() {
+        initializeMap();
+
+        map.addListener('click', function(e) {
+            searchCoordinateToAddress(e.coord);
+        });
+
+        document.getElementById('searchButton').addEventListener('click', function() {
+            var address = document.getElementById('search').value;
+            if (address) {
+                searchAddressToCoordinate(address);
+            } else {
+                alert("장소를 입력하세요.");
+            }
+        });
+
+        document.getElementById('search').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                var address = document.getElementById('search').value;
+                if (address) {
+                    searchAddressToCoordinate(address);
+                } else {
+                    alert("장소를 입력하세요.");
+                }
+            }
+        });
+
+        searchAddressToCoordinate('정자동 178-1');
+    }
+
+    function makeAddress(item) {
+        if (!item) return;
+
+        var region = item.region,
+            land = item.land,
+            isRoadAddress = item.name === 'roadaddr';
+
+        var sido = region.area1 ? region.area1.name : '',
+            sigugun = region.area2 ? region.area2.name : '',
+            dongmyun = region.area3 ? region.area3.name : '',
+            ri = region.area4 ? region.area4.name : '',
+            rest = '';
+
+        if (land) {
+            if (land.number1) {
+                rest += land.type === '2' ? '산' : '';
+                rest += land.number1;
+                rest += land.number2 ? '-' + land.number2 : '';
+            }
+            if (isRoadAddress) {
+                dongmyun = land.name || dongmyun;
+                if (land.addition0) rest += ' ' + land.addition0.value;
+            }
+        }
+
+        return [sido, sigugun, dongmyun, ri, rest].join(' ').trim();
+    }
+
+    naver.maps.onJSContentLoaded = initGeocoder;
+
 </script>
 </body>
 </html>
