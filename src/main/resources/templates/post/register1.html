@@ -4,12 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- 네이버 지도 API 불러오기 - Client ID를 실제 ID로 교체 -->
-    <script type="text/javascript" src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=&submodules=geocoder"></script>
-    <script type="text/javascript" src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId="></script>
+    <script type="text/javascript" src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=cr1mh7ex51&submodules=geocoder"></script>
+    <script type="text/javascript" src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=cr1mh7ex51"></script>
 </head>
 <body>
 <div class="post-form">
-
+    <form action="/post/register1" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="lat" id="lat">
+        <input type="hidden" name="lng" id="lng">
+        <div>
+            <label for="title">제목</label>
+            <input type="text" id="title" name="title" required maxlength="50">
+        </div>
+        <div>
+            <label for="content">내용</label>
+            <textarea id="content" name="contentText" required></textarea>
+        </div>
+        <div>
+            <label for="fileUpload">이미지 업로드</label>
+            <input type="file" id="fileUpload" name="files" multiple>
+        </div>
         <div>
             <label>만남 장소 설정</label>
             <input type="text" id="search" placeholder="장소 검색" style="width:80%; margin-bottom:10px;">
