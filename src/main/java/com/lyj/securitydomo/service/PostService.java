@@ -26,6 +26,8 @@ public interface PostService {
                 .postId(postDTO.getPostId())
                 .title(postDTO.getTitle())
                 .contentText(postDTO.getContentText())
+                .lng(postDTO.getLng())
+                .lat(postDTO.getLat())
 
                 .build();
 
@@ -45,6 +47,8 @@ public interface PostService {
                 .contentText(post.getContentText())
                 .createdAt(post.getCreatedAt())
                 .upDatedAt(post.getUpDatedAt())
+                .lng(post.getLng())
+                .lat(post.getLat())
                 .build();
 
         List<String> fileNames =

@@ -65,7 +65,7 @@ public class PostController {
             log.info("!!!!!!!!!!!!!!!!"+strFileNames.size());
         }
         postDTO.setFileNames(strFileNames);
-        log.info("board POST register.......");
+        log.info("............"+postDTO);
 //        if (bindingResult.hasErrors()) {
 //            log.info("has errors.......");
 //            redirectAttributes.addFlashAttribute("errors", bindingResult.getAllErrors());

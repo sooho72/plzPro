@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -31,4 +32,10 @@ public class PostDTO {
     private Date upDatedAt; //수정날짜
 
     private List<String> fileNames;
+
+    private LocalDateTime uploadDate;
+
+    private double lat;
+
+    private double lng;
 }

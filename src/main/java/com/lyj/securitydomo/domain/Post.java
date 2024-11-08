@@ -25,6 +25,9 @@ public class Post extends BaseEntity {
 
     private String contentText; // 게시글 본문 내용 저장
 
+    private double lat;//위도
+    private double lng;//경도
+
     // 게시글 제목과 내용을 변경하는 메서드
     public void change(String title, String contentText) {
         this.title = title;
